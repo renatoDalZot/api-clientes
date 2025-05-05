@@ -25,15 +25,21 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.kafka:spring-kafka'
 	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
-	runtimeOnly 'com.h2database:h2'
-	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.kafka:spring-kafka-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// https://mvnrepository.com/artifact/com.h2database/h2
+	testImplementation("com.h2database:h2:2.3.232")
+	// https://mvnrepository.com/artifact/org.flywaydb/flyway-database-oracle
+	runtimeOnly("org.flywaydb:flyway-database-oracle:11.7.0")
+	// https://mvnrepository.com/artifact/org.easymock/easymock
+	testImplementation("org.easymock:easymock:3.1")
+	// https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10
+	implementation("com.oracle.database.jdbc:ojdbc10:19.26.0.0")
 }
 
 tasks.named('test') {
