@@ -5,7 +5,7 @@ import com.example.api.clientes.application.dto.PessoaFisicaRequest;
 import com.example.api.clientes.application.dto.PessoaFisicaResponse;
 import com.example.api.clientes.domain.model.PessoaFisica;
 import com.example.api.clientes.domain.repository.PessoaFisicaRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
