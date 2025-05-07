@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -64,6 +65,8 @@ public class PessoaFisicaRepositoryTest {
 
         assertThat(repository.findByCpf("98765432100")).hasValueSatisfying(pessoaResgatada ->
             assertThat(pessoaResgatada.getCpf()).isEqualTo("98765432100"));
+
+  
     }
 
 }
