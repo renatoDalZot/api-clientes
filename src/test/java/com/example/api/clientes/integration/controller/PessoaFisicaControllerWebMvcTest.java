@@ -1,7 +1,7 @@
 package com.example.api.clientes.integration.controller;
 
 
-import com.example.api.clientes.application.PessoaFisicaApplicationService;
+import com.example.api.clientes.application.PessoaFisicaService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -26,7 +26,7 @@ class PessoaFisicaControllerWebMvcTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private PessoaFisicaApplicationService service;
+    private PessoaFisicaService service;
 
     @Test
     void quandoIdInexistenteDeveRetornar404() throws Exception {

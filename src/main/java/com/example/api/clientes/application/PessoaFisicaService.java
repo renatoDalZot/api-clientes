@@ -4,7 +4,6 @@ import com.example.api.clientes.application.dto.PessoaFisicaRequest;
 import com.example.api.clientes.application.dto.PessoaFisicaResponse;
 import com.example.api.clientes.domain.model.PessoaFisica;
 import com.example.api.clientes.domain.repository.PessoaFisicaRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PessoaFisicaApplicationService {
+public class PessoaFisicaService {
 
     private final PessoaFisicaRepository pessoaFisicaRepository;
 

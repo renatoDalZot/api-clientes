@@ -1,6 +1,6 @@
 package com.example.api.clientes.unit.application;
 
-import com.example.api.clientes.application.PessoaFisicaApplicationService;
+import com.example.api.clientes.application.PessoaFisicaService;
 import com.example.api.clientes.application.dto.PessoaFisicaRequest;
 import com.example.api.clientes.application.dto.PessoaFisicaResponse;
 import com.example.api.clientes.domain.model.PessoaFisica;
@@ -16,10 +16,10 @@ import static com.example.api.clientes.unit.provider.PessoaFisicaProvider.pessoa
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class PessoaFisicaApplicationServiceTest {
+public class PessoaFisicaServiceTest {
 
     private PessoaFisicaRepository pessoaFisicaRepositoryMock = EasyMock.createMock(PessoaFisicaRepository.class);
-    private PessoaFisicaApplicationService service = new PessoaFisicaApplicationService(pessoaFisicaRepositoryMock);
+    private PessoaFisicaService service = new PessoaFisicaService(pessoaFisicaRepositoryMock);
     private final PessoaFisica pessoaMock = pessoaFisicaComDatasEspecificas(
             LocalDate.of(2025, 4, 5), LocalDate.of(2000, 1, 1));
 

@@ -2,6 +2,7 @@ package com.example.api.clientes.unit.domain;
 
 import com.example.api.clientes.application.exception.BusinessException;
 import com.example.api.clientes.domain.model.PessoaFisica;
+import com.example.api.clientes.helper.PessoaFisicaBuilder;
 import com.example.api.clientes.unit.provider.PessoaFisicaProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,10 +24,8 @@ public class PessoaFisicaTest {
 
     @Test
     void dadoMenorDeIdadeQuandoInstanciadaPessoaFisicaDeveExcepcionar() {
-        assertThrows(
-                BusinessException.class,
-                () -> new PessoaFisica("João", "123.456.789-00", DATA_CADASTRO, DATA_NASCIMENTO_MENOR_DE_IDADE)
-        );
+        assertThrows(BusinessException.class, () -> new PessoaFisicaBuilder().withDataCadastro(DATA_CADASTRO)
+                        .withDataNascimento(DATA_NASCIMENTO_MENOR_DE_IDADE).build());
     }
 
     @Test

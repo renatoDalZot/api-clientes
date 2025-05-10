@@ -1,7 +1,7 @@
 package com.example.api.clientes.controller;
 
 
-import com.example.api.clientes.application.PessoaFisicaApplicationService;
+import com.example.api.clientes.application.PessoaFisicaService;
 import com.example.api.clientes.application.dto.PessoaFisicaRequest;
 import com.example.api.clientes.application.dto.PessoaFisicaResponse;
 import org.springframework.http.HttpStatus;
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/v1/pessoa-fisica")
 public class PessoaFisicaController {
 
-    private final PessoaFisicaApplicationService pessoaFisicaApplicationService;
+    private final PessoaFisicaService pessoaFisicaApplicationService;
 
-    public PessoaFisicaController(PessoaFisicaApplicationService pessoaFisicaApplicationService) {
+    public PessoaFisicaController(PessoaFisicaService pessoaFisicaApplicationService) {
         this.pessoaFisicaApplicationService = pessoaFisicaApplicationService;
     }
 

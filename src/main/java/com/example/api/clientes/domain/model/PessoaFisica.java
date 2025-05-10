@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -47,7 +48,9 @@ public class PessoaFisica {
     private BigDecimal rendaMensal;
     @Column(name = "score")
     private Double score;
-
+    @Setter
+    @Column(name = "endereco_id")
+    private Long enderecoId;
 
     public PessoaFisica(String nome, String cpf, LocalDate dataCadastro, LocalDate dataNascimento) {
         this.nome = nome;
