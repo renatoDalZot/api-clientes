@@ -1,5 +1,7 @@
 package com.example.api.clientes.helper;
 
+import com.example.api.clientes.application.dto.EnderecoRequest;
+import com.example.api.clientes.application.dto.EnderecoResponse;
 import com.example.api.clientes.domain.model.Endereco;
 
 public class EnderecoBuilder {
@@ -55,5 +57,13 @@ public class EnderecoBuilder {
 
     public Endereco build() {
         return new Endereco(id, logradouro, numero, complemento, bairro, cep, cidade, estado);
+    }
+
+    public EnderecoRequest buidRequest() {
+        return new EnderecoRequest(logradouro, numero, complemento, bairro, cep, cidade, estado);
+    }
+
+    public EnderecoResponse buildResponse() {
+        return new EnderecoResponse(id, logradouro, numero, complemento, bairro, cep, cidade, estado);
     }
 }

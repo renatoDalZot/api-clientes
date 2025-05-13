@@ -1,6 +1,6 @@
 package com.example.api.clientes.unit.application;
 
-import com.example.api.clientes.application.PessoaFisicaService;
+import com.example.api.clientes.application.service.PessoaFisicaService;
 import com.example.api.clientes.application.dto.PessoaFisicaRequest;
 import com.example.api.clientes.application.dto.PessoaFisicaResponse;
 import com.example.api.clientes.domain.model.PessoaFisica;

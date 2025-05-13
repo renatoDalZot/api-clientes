@@ -45,25 +45,18 @@ public class EnderecoRepositoryTest {
     @Test
     void dadoNovoCadastro_quandoProcurado_entaoSucesso() {
        // Cenário
-        var enderecoEsperado = new EnderecoBuilder().build();
-        entityManager.persist(enderecoEsperado);
+        var endereco = new EnderecoBuilder().build();
+        entityManager.persist(endereco);
         entityManager.flush();
         entityManager.clear();
 
         // Ação e Verificação
-        assertThat(repository.findById(enderecoEsperado.getId())).hasValueSatisfying(enderecoAtual ->
-                assertEnderecoAtualEqualsEnderecoEsperado(enderecoAtual, enderecoEsperado));
+        var enderecoEsperado = new EnderecoBuilder().withComplemento("Apto 5454").build();
+        assertThat(repository.findById(endereco.getId())).hasValueSatisfying(enderecoAtual ->
+                assertEnderecoAtualEqualsEnderecoEsperado(enderecoAtual, endereco));
     }
 
     private void assertEnderecoAtualEqualsEnderecoEsperado(Endereco enderecoAtual, Endereco enderecoEsperado) {
-        assertThat(enderecoAtual.getId()).isEqualTo(enderecoEsperado.getId());
-        assertThat(enderecoAtual.getLogradouro()).isEqualTo(enderecoEsperado.getLogradouro());
-        assertThat(enderecoAtual.getNumero()).isEqualTo(enderecoEsperado.getNumero());
-        assertThat(enderecoAtual.getComplemento()).isEqualTo(enderecoEsperado.getComplemento());
-        assertThat(enderecoAtual.getBairro()).isEqualTo(enderecoEsperado.getBairro());
-        assertThat(enderecoAtual.getCep()).isEqualTo(enderecoEsperado.getCep());
-        assertThat(enderecoAtual.getCidade()).isEqualTo(enderecoEsperado.getCidade());
-        assertThat(enderecoAtual.getEstado()).isEqualTo(enderecoEsperado.getEstado());
+        assertThat(enderecoAtual).usingRecursiveComparison().isEqualTo(enderecoEsperado);
     }
-
 }

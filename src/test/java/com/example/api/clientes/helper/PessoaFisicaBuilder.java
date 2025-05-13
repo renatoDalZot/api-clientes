@@ -1,7 +1,9 @@
 package com.example.api.clientes.helper;
 
+import com.example.api.clientes.application.dto.PessoaFisicaResponse;
 import com.example.api.clientes.domain.model.PessoaFisica;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class PessoaFisicaBuilder {
@@ -32,5 +34,17 @@ public class PessoaFisicaBuilder {
 
     public PessoaFisica build() {
         return new PessoaFisica(nome, cpf, dataCadastro, dataNascimento);
+    }
+
+    public PessoaFisicaResponse buildResponse() {
+        return new PessoaFisicaResponse(
+                1L,
+                nome,
+                cpf,
+                dataCadastro,
+                dataNascimento,
+                BigDecimal.valueOf(0.0),
+                0.0
+        );
     }
 }

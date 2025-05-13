@@ -1,4 +1,4 @@
-package com.example.api.clientes.application;
+package com.example.api.clientes.application.service;
 
 import com.example.api.clientes.application.dto.PessoaFisicaRequest;
 import com.example.api.clientes.application.dto.PessoaFisicaResponse;

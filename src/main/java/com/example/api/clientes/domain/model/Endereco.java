@@ -37,7 +37,6 @@ public class Endereco {
 
     public Endereco(Long pessoaFisicaId, String logradouro, int numero, String complemento, String bairro, String cep, String cidade, String estado) {
         this.id = pessoaFisicaId;
-        validarCep(cep);
         this.logradouro = logradouro;
         this.numero = numero;
         this.complemento = complemento;
@@ -45,9 +44,5 @@ public class Endereco {
         this.cep = cep;
         this.cidade = cidade;
         this.estado = estado;
-    }
-
-    private void validarCep(String cep) {
-        if (!cep.matches("\\d{5}-\\d{3}")) throw new IllegalArgumentException("CEP deve estar no formato 00000-000");
     }
 }
