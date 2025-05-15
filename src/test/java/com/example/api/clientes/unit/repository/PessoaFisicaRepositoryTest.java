@@ -27,46 +27,56 @@ public class PessoaFisicaRepositoryTest {
 
    @Test
    void dadoNovoCadastro_quandoSalvoNoRepositorio_entaoOsDadosPersistem() {
-       var pessoaNova = new PessoaFisica("João", "12345678900", LocalDate.of(2025,4,5),
+       // Cenário
+       var pessoaEsperada = new PessoaFisica("João", "12345678900", LocalDate.of(2025,4,5),
                LocalDate.of(2000,1,1));
 
-       repository.save(pessoaNova);
-
+       // Ação
+       repository.save(pessoaEsperada);
        entityManager.flush();
        entityManager.clear();
 
-       assertThat(repository.findById(pessoaNova.getId())).hasValueSatisfying(pessoaResgatada -> {
-           assertThat(pessoaResgatada.getId()).isEqualTo(pessoaNova.getId());
-           assertThat(pessoaResgatada.getNome()).isEqualTo("João");
-           assertThat(pessoaResgatada.getCpf()).isEqualTo("12345678900");
-           assertThat(pessoaResgatada.getDataCadastro()).isEqualTo(LocalDate.of(2025,4,5));
-           assertThat(pessoaResgatada.getDataNascimento()).isEqualTo(LocalDate.of(2000,1,1));
-       });
+       // Verificação
+       PessoaFisica pessoaAtual = entityManager.find(PessoaFisica.class, pessoaEsperada.getId());
+       assertPessoaAtualEqualsPessoaEsperada(pessoaAtual, pessoaEsperada);
    }
 
     @Test
-    void dadoNovoCadastro_quandoProcurado_entaoSucesso() {
-        PessoaFisica pessoaNova = new PessoaFisica("Maria", "98765432100", LocalDate.of(2025, 4, 5),
+    void dadoCadastroNoBanco_quandoProcurado_entaoSucesso() {
+       //Cenário
+        PessoaFisica pessoaEsperada = new PessoaFisica("Maria", "98765432100", LocalDate.of(2025, 4, 5),
                 LocalDate.of(2000, 1, 1));
-
-        entityManager.persist(pessoaNova);
+        entityManager.persist(pessoaEsperada);
         entityManager.flush();
         entityManager.clear();
 
-        assertThat(repository.findById(pessoaNova.getId())).hasValueSatisfying(pessoaResgatada ->
-                assertThat(pessoaResgatada.getId()).isEqualTo(pessoaNova.getId()));
+        // Ação e Verificação
+        assertThat(repository.findById(pessoaEsperada.getId())).hasValueSatisfying(pessoaAtual -> {
+            assertPessoaAtualEqualsPessoaEsperada(pessoaAtual, pessoaEsperada);
+        });
     }
 
     @Test
-    void dadoNovoCadastro_quandoProcuradoPorCpf_entaoSucesso() {
-        PessoaFisica pessoaNova = new PessoaFisica("Maria", "98765432100", LocalDate.of(2025,4,5), LocalDate.of(2000,1,1));
+    void dadoCadastroNoBanco_quandoProcuradoPorCpf_entaoSucesso() {
+        // Cenário
+        PessoaFisica pessoaEsperada = new PessoaFisica("Maria", "98765432100", LocalDate.of(2025,4,5), LocalDate.of(2000,1,1));
+        entityManager.persist(pessoaEsperada);
+        entityManager.flush();
+        entityManager.clear();
 
-        entityManager.persist(pessoaNova);
+        // Ação e Verificação
+        assertThat(repository.findByCpf("98765432100")).hasValueSatisfying(pessoaAtual -> {
+            assertPessoaAtualEqualsPessoaEsperada(pessoaAtual, pessoaEsperada);
+        });
+    }
 
-        assertThat(repository.findByCpf("98765432100")).hasValueSatisfying(pessoaResgatada ->
-            assertThat(pessoaResgatada.getCpf()).isEqualTo("98765432100"));
-
-  
+    private void assertPessoaAtualEqualsPessoaEsperada(PessoaFisica pessoaAtual, PessoaFisica pessoaEsperada) {
+        assertThat(pessoaAtual).isNotNull();
+        assertThat(pessoaAtual.getId()).isEqualTo(pessoaEsperada.getId());
+        assertThat(pessoaAtual.getNome()).isEqualTo(pessoaEsperada.getNome());
+        assertThat(pessoaAtual.getCpf()).isEqualTo(pessoaEsperada.getCpf());
+        assertThat(pessoaAtual.getDataCadastro()).isEqualTo(pessoaEsperada.getDataCadastro());
+        assertThat(pessoaAtual.getDataNascimento()).isEqualTo(pessoaEsperada.getDataNascimento());
     }
 
 }

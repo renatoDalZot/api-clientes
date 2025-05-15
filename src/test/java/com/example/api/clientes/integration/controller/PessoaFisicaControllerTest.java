@@ -41,10 +41,10 @@ public class PessoaFisicaControllerTest {
 
     @Test
     void deveCadastrarPessoaFisica() throws Exception {
-        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João", "12345678900",
+        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João da Silva", "12345678900",
                 LocalDate.of(2025,1,1), LocalDate.of(2000, 1, 1));
 
-        var mvcResult = mockMvc.perform(post("/v1/pessoa-fisica")
+        var mvcResult = mockMvc.perform(post("/v1/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pessoaArranjo)))
                 .andExpect(status().isCreated())
@@ -59,10 +59,10 @@ public class PessoaFisicaControllerTest {
             @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     })
     void deveBuscarPessoaFisicaPorId() throws Exception {
-        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João", "12345678900",
+        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João da Silva", "12345678900",
                 LocalDate.of(2025,1,1), LocalDate.of(2000, 1, 1));
 
-        mockMvc.perform(get("/v1/pessoa-fisica/{id}", 1))
+        mockMvc.perform(get("/v1/clientes/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nome").value(pessoaArranjo.nome()))
@@ -77,10 +77,10 @@ public class PessoaFisicaControllerTest {
             @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     })
     void deveBuscarPessoaFisicaPorCpf() throws Exception {
-        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João", "12345678900",
+        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João da Silva", "12345678900",
                 LocalDate.of(2025,1,1), LocalDate.of(2000, 1, 1));
 
-        mockMvc.perform(get("/v1/pessoa-fisica/cpf/{number}", pessoaArranjo.cpf()))
+        mockMvc.perform(get("/v1/clientes/cpf/{number}", pessoaArranjo.cpf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nome").value(pessoaArranjo.nome()))
@@ -89,8 +89,8 @@ public class PessoaFisicaControllerTest {
 
     @Test
     void deveRetornar422QuandoPessoaMenorDeIdade() throws Exception {
-        var request = new PessoaFisicaRequest("João", "12345678900", LocalDate.of(2025,4,1), LocalDate.of(2007, 4, 2));
-        mockMvc.perform(post("/v1/pessoa-fisica")
+        var request = new PessoaFisicaRequest("João da Silva", "12345678900", LocalDate.of(2025,4,1), LocalDate.of(2007, 4, 2));
+        mockMvc.perform(post("/v1/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnprocessableEntity());

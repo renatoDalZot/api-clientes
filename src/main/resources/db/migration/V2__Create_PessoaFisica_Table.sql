@@ -6,5 +6,6 @@ CREATE TABLE pessoa_fisica (
     data_nascimento DATE NOT NULL,
     data_cadastro DATE NOT NULL,
     renda_mensal NUMBER(19, 2),
-    score NUMBER(3,1) NOT NULL
+    score NUMBER(3,1) NOT NULL,
+    endereco_id NUMBER(20,0)
 );
