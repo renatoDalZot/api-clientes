@@ -19,7 +19,7 @@ public class Endereco {
     @NotEmpty(message = "Logradouro não pode ser vazio")
     private String logradouro;
     @Column(name = "numero")
-    private Integer numero;
+    private String numero;
     @Column(name = "complemento")
     private String complemento;
     @NotEmpty(message = "Bairro não pode ser vazio")
@@ -35,7 +35,7 @@ public class Endereco {
     @Column(name = "estado")
     private String estado;
 
-    public Endereco(Long pessoaFisicaId, String logradouro, int numero, String complemento, String bairro, String cep, String cidade, String estado) {
+    public Endereco(Long pessoaFisicaId, String logradouro, String numero, String complemento, String bairro, String cep, String cidade, String estado) {
         this.id = pessoaFisicaId;
         this.logradouro = logradouro;
         this.numero = numero;

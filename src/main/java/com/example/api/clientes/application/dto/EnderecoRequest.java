@@ -7,7 +7,7 @@ public record EnderecoRequest(
         @NotEmpty (message = "Logradouro não pode ser vazio")
         String logradouro,
         @NotNull(message = "Número não pode ser nulo")
-        Integer numero,
+        String numero,
         String complemento,
         @NotEmpty (message = "Bairro não pode ser vazio")
         String bairro,

@@ -5,6 +5,7 @@ import com.example.api.clientes.application.dto.EnderecoResponse;
 import com.example.api.clientes.domain.model.Endereco;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,17 +23,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = "configuracao.endereco.formato=json")
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class EnderecoControllerTest {
+public class EnderecoControllerJsonTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     private ObjectMapper objectMapper;
-    @Autowired
+    @PersistenceContext
     private EntityManager entityManager;
 
     @BeforeEach
@@ -48,7 +49,7 @@ public class EnderecoControllerTest {
     })
     void deveCadastrarEndereco() throws Exception {
         //Cenário
-        EnderecoRequest enderecoRequest = new EnderecoRequest("Avenida Paulista", 1578, "Apto 101", "Bela Vista",
+        EnderecoRequest enderecoRequest = new EnderecoRequest("Avenida Paulista", "1578", "Apto 101", "Bela Vista",
                 "01310-200", "São Paulo", "SP");
 
         // Ação
@@ -65,7 +66,7 @@ public class EnderecoControllerTest {
         var enderecoPersistido = entityManager.find(Endereco.class, result.id());
         Assertions.assertNotNull(enderecoPersistido, "O endereço deve estar persistido no banco de dados");
         Assertions.assertEquals("Avenida Paulista", enderecoPersistido.getLogradouro());
-        Assertions.assertEquals(1578, enderecoPersistido.getNumero());
+        Assertions.assertEquals("1578", enderecoPersistido.getNumero());
         Assertions.assertEquals("01310-200", enderecoPersistido.getCep());
     }
 
@@ -76,7 +77,7 @@ public class EnderecoControllerTest {
     })
     void deveRetornar404QuandoPessoaInexistente() {
         // Cenário
-        EnderecoRequest enderecoRequest = new EnderecoRequest("Avenida Paulista", 1578, "Apto 101", "Bela Vista",
+        EnderecoRequest enderecoRequest = new EnderecoRequest("Avenida Paulista", "1578", "Apto 101", "Bela Vista",
                 "01310-200", "São Paulo", "SP");
 
         // Ação e Verificação

@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ActiveProfiles("test")
-class EnderecoControllerWebMvcTest {
+class EnderecoControllerJsonWebMvcTest {
 
     @Autowired
     private MockMvc mockMvc;

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-@Primary
 public interface PessoaFisicaRepository extends JpaRepository<PessoaFisica, Long> {
     Optional<PessoaFisica> findByCpf(String cpf);
 }

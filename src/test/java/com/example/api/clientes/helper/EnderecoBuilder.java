@@ -8,7 +8,7 @@ public class EnderecoBuilder {
 
     private Long id = 1L;
     private String logradouro = "Rua das Flores";
-    private Integer numero = 123;
+    private String numero = "123";
     private String complemento = "Apto 45";
     private String bairro = "Centro";
     private String cep = "12345-678";
@@ -25,7 +25,7 @@ public class EnderecoBuilder {
         return this;
     }
 
-    public EnderecoBuilder withNumero(Integer numero) {
+    public EnderecoBuilder withNumero(String numero) {
         this.numero = numero;
         return this;
     }
