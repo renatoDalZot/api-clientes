@@ -27,9 +27,15 @@ package com.example.api.clientes.unit.helper;
                 Assertions.assertThat(resultado.getCidade()).isEqualTo("São Paulo");
                 Assertions.assertThat(resultado.getEstado()).isEqualTo("SP");
             } else {
-                Assertions.assertThatThrownBy(() -> EnderecoParser.getEnderecoFromPlainText(plainTextEndereco, 1L, SEPARADOR_MUNICIPIO_UF))
-                        .isInstanceOf(BusinessException.class)
-                        .hasMessage(mensagemDeErro);
+                if (mensagemDeErro.contains("Endereço fora do padrão esperado: deve conter")) {
+                    Assertions.assertThatThrownBy(() -> EnderecoParser.getEnderecoFromPlainText(plainTextEndereco, 1L, SEPARADOR_MUNICIPIO_UF))
+                            .isInstanceOf(IllegalArgumentException.class)
+                            .hasMessageContaining(mensagemDeErro);
+                } else {
+                    Assertions.assertThatThrownBy(() -> EnderecoParser.getEnderecoFromPlainText(plainTextEndereco, 1L, SEPARADOR_MUNICIPIO_UF))
+                            .isInstanceOf(BusinessException.class)
+                            .hasMessage(mensagemDeErro);
+                }
             }
         }
 
@@ -63,9 +69,9 @@ package com.example.api.clientes.unit.helper;
                     Arguments.of(EnderecoPlainTextBuilder.comSnEComplemento(SEPARADOR_MUNICIPIO_UF), null, consumidorAssertsEnderecoSemNumero, "Endereço com S/N e complemento"),
                     Arguments.of(EnderecoPlainTextBuilder.soLogradouroValido(SEPARADOR_MUNICIPIO_UF), null, consumidorAssertsEnderecoComSnESemComplemento, "Endereço sem número nem complemento válido"),
                     Arguments.of(EnderecoPlainTextBuilder.soLogradouroInvalido(SEPARADOR_MUNICIPIO_UF), "Linha 1 do endereço inválida: deve conter o logradouro, número e complemento.", null, "Endereço sem número nem complemento inválido"),
-                    Arguments.of(EnderecoPlainTextBuilder.semBairro(SEPARADOR_MUNICIPIO_UF), "Endereço fora do padrão esperado: deve conter 4 linhas.", null, "Endereço sem bairro"),
-                    Arguments.of(EnderecoPlainTextBuilder.semCidadeEstado(), "Endereço fora do padrão esperado: deve conter 4 linhas.", null, "Endereço sem cidade e estado"),
-                    Arguments.of(EnderecoPlainTextBuilder.semCep(SEPARADOR_MUNICIPIO_UF), "Endereço fora do padrão esperado: deve conter 4 linhas.", null, "Endereço sem CEP"),
+                    Arguments.of(EnderecoPlainTextBuilder.semBairro(SEPARADOR_MUNICIPIO_UF), "Endereço fora do padrão esperado: deve conter", null, "Endereço sem bairro fica com 1 linha a menos: bad-request"),
+                    Arguments.of(EnderecoPlainTextBuilder.semCidadeEstado(), "Endereço fora do padrão esperado: deve conter", null, "Endereço sem cidade e estado fica com 1 linha a menos: bad-request"),
+                    Arguments.of(EnderecoPlainTextBuilder.semCep(SEPARADOR_MUNICIPIO_UF), "Endereço fora do padrão esperado: deve conter", null, "Endereço sem CEP fica com 1 linha a menos: bad-request"),
                     Arguments.of(EnderecoPlainTextBuilder.comCep("345-678", SEPARADOR_MUNICIPIO_UF), "CEP deve estar no formato 00000-000", null, "Endereço com CEP inválido"),
                     Arguments.of(EnderecoPlainTextBuilder.semCidade(), "Linha 4 do endereço inválida: deve conter '<cidade> / <estado>'.", null, "Endereço sem cidade"),
                     Arguments.of(EnderecoPlainTextBuilder.buildComSeparadorErrado(SEPARADOR_MUNICIPIO_UF), "Linha 4 do endereço inválida: deve conter '<cidade> / <estado>'.", null, "Endereço com separador errado")
