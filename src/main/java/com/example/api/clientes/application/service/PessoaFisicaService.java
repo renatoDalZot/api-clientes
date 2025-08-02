@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -17,11 +19,16 @@ import java.util.Optional;
 public class PessoaFisicaService {
 
     private final PessoaFisicaRepository pessoaFisicaRepository;
+    private final Clock clock;
 
     @Transactional
     public PessoaFisicaResponse cadastrar(PessoaFisicaRequest pessoaFisicaRequest) {
-        PessoaFisica pessoaFisica = new PessoaFisica(pessoaFisicaRequest.nome(), pessoaFisicaRequest.cpf(),
-                pessoaFisicaRequest.dataCadastro(), pessoaFisicaRequest.dataNascimento());
+        PessoaFisica pessoaFisica = new PessoaFisica(
+                pessoaFisicaRequest.nome(),
+                pessoaFisicaRequest.cpf(),
+                LocalDate.now(clock),
+                pessoaFisicaRequest.dataNascimento()
+        );
         return pessoaToDTO(pessoaFisicaRepository.save(pessoaFisica));
     }
 

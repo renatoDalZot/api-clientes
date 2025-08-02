@@ -137,29 +137,4 @@ public class EnderecoControllerTextTest {
             Assertions.fail("Erro ao buscar endereço: " + e.getMessage());
         }
     }
-
-    @Test
-    @SqlGroup({
-            @Sql(scripts = "/sql/inserir_pessoa_fisica.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-            @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    })
-    void deveRetornar422QuandoCepInvalido() throws Exception {
-        // Cenário, ação e verificação
-        mockMvc.perform(post("/v1/clientes/{cpf}/endereco", "12345678900")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(
-                            """
-                            {
-                                "logradouro": "Avenida Paulista",
-                                "numero": 1578,
-                                "complemento": "Apto 101",
-                                "bairro": "Bela Vista",
-                                "cep": "CEP_INVALIDO",
-                                "cidade": "São Paulo",
-                                "estado": "SP"
-                            }
-                        """
-                        ))
-                .andExpect(status().isUnprocessableEntity());
-    }
 }

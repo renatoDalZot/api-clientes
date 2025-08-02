@@ -11,8 +11,6 @@ public record PessoaFisicaRequest(
         String nome,
         @NotEmpty(message = "CPF é obrigatório")
         String cpf,
-        @NotNull(message = "Data de cadastro é obrigatória")
-        LocalDate dataCadastro,
         @NotNull(message = "Data de nascimento é obrigatória")
         LocalDate dataNascimento
 ) {
