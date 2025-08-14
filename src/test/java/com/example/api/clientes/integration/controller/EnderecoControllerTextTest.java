@@ -1,7 +1,6 @@
 package com.example.api.clientes.integration.controller;
 
 import com.example.api.clientes.application.dto.EnderecoRequest;
-import com.example.api.clientes.application.dto.EnderecoResponse;
 import com.example.api.clientes.domain.model.Endereco;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
@@ -19,8 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(properties = "configuracao.endereco.formato=text")
 @AutoConfigureMockMvc
@@ -52,7 +50,7 @@ public class EnderecoControllerTextTest {
                 "Rua Riberão Tavares, 123 - Casa",
                 "Bom Jesus",
                 "12345-678",
-                "São Paulo/SP");
+                "São Paulo / SP");
 
         // Ação
         var mvcResult = mockMvc.perform(post("/v1/clientes/{cpf}/endereco", "12345678900")
@@ -60,12 +58,12 @@ public class EnderecoControllerTextTest {
                         .content(enderecoRequest))
                 .andExpect(status().isCreated())
                 .andReturn();
-        var result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), EnderecoResponse.class);
+        String enderecoRetornado = mvcResult.getResponse().getContentAsString();
 
         // Verificação
-        Assertions.assertTrue(result.id() > 0, "ID deve ser maior que zero");
+        Assertions.assertEquals(enderecoRequest, enderecoRetornado, "O endereço retornado deve ser igual ao enviado");
 
-        var enderecoPersistido = entityManager.find(Endereco.class, result.id());
+        var enderecoPersistido = entityManager.find(Endereco.class, 1L);
         Assertions.assertNotNull(enderecoPersistido, "O endereço deve estar persistido no banco de dados");
         Assertions.assertEquals("Rua Riberão Tavares", enderecoPersistido.getLogradouro());
         Assertions.assertEquals("123", enderecoPersistido.getNumero());
@@ -106,19 +104,16 @@ public class EnderecoControllerTextTest {
     void deveBuscarEnderecoPorCpf() {
         // Cenário
         String cpf = "12345678900";
+        String enderecoEsperado = "Rua Riberão Tavares, 123 - Casa" + System.lineSeparator()
+                + "Bom Jesus" + System.lineSeparator()
+                + "12345-678" + System.lineSeparator()
+                + "São Paulo / SP";
 
         // Ação e Verificação
         try {
             mockMvc.perform(get("/v1/clientes/{cpf}/endereco", cpf))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id").value(1L))
-                    .andExpect(jsonPath("$.logradouro").value("Rua Riberão Tavares"))
-                    .andExpect(jsonPath("$.numero").value(123))
-                    .andExpect(jsonPath("$.cep").value("12345-678"))
-                    .andExpect(jsonPath("$.complemento").value("Casa"))
-                    .andExpect(jsonPath("$.bairro").value("Bom Jesus"))
-                    .andExpect(jsonPath("$.cidade").value("São Paulo"))
-                    .andExpect(jsonPath("$.estado").value("SP"));
+                    .andExpect(content().string(enderecoEsperado));
         } catch (Exception e) {
             Assertions.fail("Erro ao buscar endereço: " + e.getMessage());
         }

@@ -20,15 +20,33 @@ public class EnderecoControllerText {
     private final EnderecoService enderecoService;
     private final EnderecoConsulta enderecoConsulta;
 
-    @PostMapping("/v1/clientes/{cpf}/endereco") // TODO: deverá ter a mesma rota do método anterior, assim que consertarmos o ConditionalOnProperty
-    public ResponseEntity<EnderecoResponse> cadastrarPlainText(@PathVariable @NotEmpty String cpf, @RequestBody String plainTextEndereco) {
+    @PostMapping("/v1/clientes/{cpf}/endereco")
+    public ResponseEntity<String> cadastrarPlainText(@PathVariable @NotEmpty String cpf, @RequestBody String plainTextEndereco) {
         return enderecoService.cadastrarPlainText(cpf, plainTextEndereco)
-                .map(body -> ResponseEntity.created(URI.create("/v1/clientes/" + cpf + "/endereco/" + body.id())).body(body))
+                .map(body -> ResponseEntity.created(URI.create("/v1/clientes/" + cpf + "/endereco/" + body.id())).body(formatEnderecoPlainText(body)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/v1/clientes/{cpf}/endereco")
-    public ResponseEntity<EnderecoResponse> buscarPorCpf(@PathVariable String cpf) {
-        return enderecoConsulta.findByCpf(cpf).map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<String> buscarPorCpf(@PathVariable String cpf) {
+        return enderecoConsulta.findByCpf(cpf)
+                .map(body -> ResponseEntity.ok(formatEnderecoPlainText(body)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    private static String formatEnderecoPlainText(EnderecoResponse body) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(body.logradouro());
+        if (body.numero() != null && !body.numero().isEmpty()) {
+            sb.append(", ").append(body.numero());
+        }
+        if (body.complemento() != null && !body.complemento().isEmpty()) {
+            sb.append(" - ").append(body.complemento());
+        }
+        sb.append(System.lineSeparator());
+        sb.append(body.bairro()).append(System.lineSeparator());
+        sb.append(body.cep()).append(System.lineSeparator());
+        sb.append(body.cidade()).append(" / ").append(body.estado());
+        return sb.toString();
     }
 }
