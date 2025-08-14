@@ -9,12 +9,14 @@ import java.util.regex.Pattern;
 public class EnderecoParser {
 
     private static final int NUM_LINHAS_ENDERECO = 4;
-    private static final Pattern LOGRADOURO_NUMERO_COMPLEMENTO_PATTERN = Pattern.compile("(.+),\\s*(\\S+)\\s*-\\s*(.+)");
-    private static final Pattern LOGRADOURO_NUMERO_PATTERN = Pattern.compile("(.+),\\s*(\\S+)");
-    private static final Pattern LOGRADOURO_COMPLEMENTO_PATTERN = Pattern.compile("(.+)-\\s*(.+)");
-    private static final Pattern LOGRADOURO_SEM_NUMERO_SEM_COMP_PATTERN = Pattern.compile("(.+)");
+    private static final Pattern PRIMEIRA_LINHA_ENDERECO_PATTERN = Pattern.compile("^(?<logradouro>[^,\\-]+?)(?:,\\s*(?<numero>\\d+))?(?:\\s*-\\s*(?<comp>.+))?$");
+    private final Pattern linhaCidadeEstadoPattern;
 
-    public static Endereco getEnderecoFromPlainText(String plainTextEndereco, Long idPessoa, String separadorMunicipioUf) {
+    public EnderecoParser(String separadorMunicipioUf) {
+        this.linhaCidadeEstadoPattern = Pattern.compile("(?<cidade>(?:\\p{L}|-|\\s)+)\\s*\\" + separadorMunicipioUf + "\\s*([a-zA-Z]{2})");
+    }
+
+    public Endereco getEnderecoFromPlainText(String plainTextEndereco, Long idPessoa) {
         String[] linhas = getLinhas(plainTextEndereco);
         String linhaLogradouro = linhas[0].trim();
         String linhaBairro = linhas[1].trim();
@@ -22,9 +24,9 @@ public class EnderecoParser {
         String linhaCidadeEstado = linhas[3].trim();
 
         String[] elementosLinha1 = extrairElementosLinha1(linhaLogradouro);
-        String logradouro = elementosLinha1[0].trim();
-        String numero = elementosLinha1[1].trim();
-        String complemento = elementosLinha1[2].trim();
+        String logradouro = elementosLinha1[0];
+        String numero = elementosLinha1[1];
+        String complemento = elementosLinha1[2];
 
         String bairro = linhaBairro.trim();
         validateLine(!bairro.isEmpty(), "Linha 2 do endereço inválida: deve conter o bairro.");
@@ -32,7 +34,7 @@ public class EnderecoParser {
         validateLine(linhaCep.matches("\\d{5}-?\\d{3}"), "CEP deve estar no formato 00000-000");
         String cep = linhaCep.trim();
 
-        Matcher linhaCidadeEstadoMatcher = Pattern.compile("(.*)" + separadorMunicipioUf + "(.*)").matcher(linhaCidadeEstado);
+        Matcher linhaCidadeEstadoMatcher = linhaCidadeEstadoPattern.matcher(linhaCidadeEstado);
         validateLine(linhaCidadeEstadoMatcher.find(), "Linha 4 do endereço inválida: deve conter '<cidade> / <estado>'.");
         String cidade = linhaCidadeEstadoMatcher.group(1).trim();
         String estado = linhaCidadeEstadoMatcher.group(2).trim();
@@ -45,35 +47,13 @@ public class EnderecoParser {
         String complemento;
         String numero;
 
+        Matcher primeiraLinhaMatcher = PRIMEIRA_LINHA_ENDERECO_PATTERN.matcher(linha1);
+        validateLine(primeiraLinhaMatcher.find(), "Linha 1 do endereço inválida: deve conter o logradouro, número (opcional) e complemento (opcional).");
 
-        if (LOGRADOURO_NUMERO_COMPLEMENTO_PATTERN.matcher(linha1).matches()) {
-            Matcher Logradouro1Matcher = LOGRADOURO_NUMERO_COMPLEMENTO_PATTERN.matcher(linha1);
-            validateLine(Logradouro1Matcher.find(), "O formato da Linha 1 do endereço está inválido. Deve ser '<logradouro>, <numero> - <complemento>' ou '<logradouro>, S/N - <complemento>'.");
-            logradouro = Logradouro1Matcher.group(1);
-            numero = Logradouro1Matcher.group(2);
-            complemento = Logradouro1Matcher.group(3).trim();
-        } else if (LOGRADOURO_NUMERO_PATTERN.matcher(linha1).matches()) {
-            Matcher linhaLogradouroMatcher = LOGRADOURO_NUMERO_PATTERN.matcher(linha1);
-            validateLine(linhaLogradouroMatcher.find(), "O formato da Linha 1 do endereço está inválido. Deve ser '<logradouro>, <numero> - <complemento>' ou '<logradouro>, S/N - <complemento>'.");
-            logradouro = linhaLogradouroMatcher.group(1);
-            numero = linhaLogradouroMatcher.group(2);
-            complemento = "";
-        } else if (LOGRADOURO_COMPLEMENTO_PATTERN.matcher(linha1).matches()) {
-            Matcher linhaLogradouroMatcher = LOGRADOURO_COMPLEMENTO_PATTERN.matcher(linha1);
-            validateLine(linhaLogradouroMatcher.find(), "O formato da Linha 1 do endereço está inválido. Deve ser '<logradouro>, <numero> - <complemento>' ou '<logradouro>, S/N - <complemento>'.");
-            logradouro = linhaLogradouroMatcher.group(1);
-            numero = "S/N";
-            complemento = linhaLogradouroMatcher.group(2).trim();
-        } else if (LOGRADOURO_SEM_NUMERO_SEM_COMP_PATTERN.matcher(linha1).matches()) {
-            Matcher linhaLogradouroMatcher = LOGRADOURO_SEM_NUMERO_SEM_COMP_PATTERN.matcher(linha1);
-            validateLine(linhaLogradouroMatcher.find(), "O formato da Linha 1 do endereço está inválido. Deve ser '<logradouro>, <numero> - <complemento>' ou '<logradouro>, S/N - <complemento>'.");
-            logradouro = linhaLogradouroMatcher.group(1);
-            numero = "S/N";
-            complemento = "";
-        }
-        else {
-            throw new BusinessException("Linha 1 do endereço inválida: deve conter o logradouro, número e complemento.");
-        }
+        logradouro = primeiraLinhaMatcher.group("logradouro").trim();
+        numero = primeiraLinhaMatcher.group("numero");
+        complemento = primeiraLinhaMatcher.group("comp") != null ? primeiraLinhaMatcher.group("comp").trim() : null;
+
         return new String[]{logradouro, numero, complemento};
     }
 
