@@ -9,13 +9,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.Clock;
 import java.time.LocalDate;
+import java.time.ZoneId;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -39,12 +45,25 @@ public class PessoaFisicaControllerTest {
         objectMapper.findAndRegisterModules();
     }
 
+    @TestConfiguration
+    static class TestClockConfig {
+        @Primary
+        @Bean
+        public Clock clock() {
+            // O relógio agora está fixo em 01/01/2025 para os testes
+            return Clock.fixed(
+                    LocalDate.of(2025, 1, 1).atStartOfDay(ZoneId.of("America/Sao_Paulo")).toInstant(),
+                    ZoneId.of("America/Sao_Paulo")
+            );
+        }
+    }
+
     @Test
     void deveCadastrarPessoaFisica() throws Exception {
-        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João", "12345678900",
-                LocalDate.of(2025,1,1), LocalDate.of(2000, 1, 1));
+        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João da Silva", "12345678900",
+                LocalDate.of(2007, 1, 1));
 
-        var mvcResult = mockMvc.perform(post("/v1/pessoa-fisica")
+        var mvcResult = mockMvc.perform(post("/v1/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(pessoaArranjo)))
                 .andExpect(status().isCreated())
@@ -59,10 +78,10 @@ public class PessoaFisicaControllerTest {
             @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     })
     void deveBuscarPessoaFisicaPorId() throws Exception {
-        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João", "12345678900",
-                LocalDate.of(2025,1,1), LocalDate.of(2000, 1, 1));
+        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João da Silva", "12345678900",
+                LocalDate.of(2000, 1, 1));
 
-        mockMvc.perform(get("/v1/pessoa-fisica/{id}", 1))
+        mockMvc.perform(get("/v1/clientes/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nome").value(pessoaArranjo.nome()))
@@ -77,10 +96,10 @@ public class PessoaFisicaControllerTest {
             @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     })
     void deveBuscarPessoaFisicaPorCpf() throws Exception {
-        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João", "12345678900",
-                LocalDate.of(2025,1,1), LocalDate.of(2000, 1, 1));
+        PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João da Silva", "12345678900",
+                LocalDate.of(2000, 1, 1));
 
-        mockMvc.perform(get("/v1/pessoa-fisica/cpf/{number}", pessoaArranjo.cpf()))
+        mockMvc.perform(get("/v1/clientes/cpf/{number}", pessoaArranjo.cpf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nome").value(pessoaArranjo.nome()))
@@ -89,8 +108,9 @@ public class PessoaFisicaControllerTest {
 
     @Test
     void deveRetornar422QuandoPessoaMenorDeIdade() throws Exception {
-        var request = new PessoaFisicaRequest("João", "12345678900", LocalDate.of(2025,4,1), LocalDate.of(2007, 4, 2));
-        mockMvc.perform(post("/v1/pessoa-fisica")
+        var request = new PessoaFisicaRequest("João da Silva", "12345678900",
+                LocalDate.of(2007, 4, 2));
+        mockMvc.perform(post("/v1/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnprocessableEntity());

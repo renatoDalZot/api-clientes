@@ -5,12 +5,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Period;
 
+@Getter
 @Table(name = "pessoa_fisica")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -45,7 +48,9 @@ public class PessoaFisica {
     private BigDecimal rendaMensal;
     @Column(name = "score")
     private Double score;
-
+    @Setter
+    @Column(name = "endereco_id")
+    private Long enderecoId;
 
     public PessoaFisica(String nome, String cpf, LocalDate dataCadastro, LocalDate dataNascimento) {
         this.nome = nome;
@@ -70,33 +75,5 @@ public class PessoaFisica {
         Period period = Period.between(this.dataNascimento, this.dataCadastro);
         int idade = period.getYears();
         return idade >= 18;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public LocalDate getDataNascimento() {
-        return dataNascimento;
-    }
-
-    public LocalDate getDataCadastro() {
-        return dataCadastro;
-    }
-
-    public BigDecimal getRendaMensal() {
-        return rendaMensal;
-    }
-
-    public Double getScore() {
-        return score;
     }
 }

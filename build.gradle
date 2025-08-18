@@ -25,6 +25,7 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -40,6 +41,7 @@ dependencies {
 	testImplementation("org.easymock:easymock:3.1")
 	// https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10
 	implementation("com.oracle.database.jdbc:ojdbc10:19.26.0.0")
+	implementation 'org.springframework.kafka:spring-kafka'
 }
 
 tasks.named('test') {

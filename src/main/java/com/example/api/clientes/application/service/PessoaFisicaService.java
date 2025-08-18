@@ -1,28 +1,34 @@
-package com.example.api.clientes.application;
+package com.example.api.clientes.application.service;
 
 import com.example.api.clientes.application.dto.PessoaFisicaRequest;
 import com.example.api.clientes.application.dto.PessoaFisicaResponse;
 import com.example.api.clientes.domain.model.PessoaFisica;
 import com.example.api.clientes.domain.repository.PessoaFisicaRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class PessoaFisicaApplicationService {
+public class PessoaFisicaService {
 
     private final PessoaFisicaRepository pessoaFisicaRepository;
+    private final Clock clock;
 
     @Transactional
     public PessoaFisicaResponse cadastrar(PessoaFisicaRequest pessoaFisicaRequest) {
-        PessoaFisica pessoaFisica = new PessoaFisica(pessoaFisicaRequest.nome(), pessoaFisicaRequest.cpf(),
-                pessoaFisicaRequest.dataCadastro(), pessoaFisicaRequest.dataNascimento());
+        PessoaFisica pessoaFisica = new PessoaFisica(
+                pessoaFisicaRequest.nome(),
+                pessoaFisicaRequest.cpf(),
+                LocalDate.now(clock),
+                pessoaFisicaRequest.dataNascimento()
+        );
         return pessoaToDTO(pessoaFisicaRepository.save(pessoaFisica));
     }
 

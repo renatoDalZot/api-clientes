@@ -1,6 +1,5 @@
 package com.example.api.clientes.integration.controller;
 
-
 import com.example.api.clientes.application.service.EnderecoService;
 import com.example.api.clientes.application.service.PessoaFisicaService;
 import com.example.api.clientes.infraestrutura.EnderecoConsulta;
@@ -17,18 +16,15 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @WebMvcTest
 @ActiveProfiles("test")
-class PessoaFisicaControllerWebMvcTest {
-
-
+class EnderecoControllerJsonWebMvcTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
-    private PessoaFisicaService service;
+    private PessoaFisicaService pessoaFisicaService;
 
     @MockitoBean
     private EnderecoService enderecoService;
@@ -37,13 +33,11 @@ class PessoaFisicaControllerWebMvcTest {
     private EnderecoConsulta enderecoConsulta;
 
     @Test
-    void quandoIdInexistenteDeveRetornar404() throws Exception {
+    void quandoEnderecoNaoEncontradoDeveRetornar404() throws Exception {
         // Simulando o comportamento do serviço para retornar Optional.empty()
-        when(service.buscarPorId(1L)).thenReturn(Optional.empty());
+        when(enderecoConsulta.findByCpf("12345678900")).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/v1/clientes/{id}", 1))
+        mockMvc.perform(get("/v1/clientes/{cpf}/endereco", "12345678900"))
                 .andExpect(status().isNotFound());
     }
-
-
 }
