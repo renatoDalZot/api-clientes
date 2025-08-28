@@ -46,6 +46,7 @@ public class PessoaFisicaServiceTest {
     @Test
     void deveCadastrarPessoaFisicaComSucesso() {
         ReflectionTestUtils.setField(pessoaMock, "id", 1L);
+        EasyMock.expect(pessoaFisicaRepositoryMock.findByCpf("12345678900")).andReturn(java.util.Optional.empty());
         EasyMock.expect(pessoaFisicaRepositoryMock.save(EasyMock.anyObject(PessoaFisica.class))).andReturn(pessoaMock);
         EasyMock.replay(pessoaFisicaRepositoryMock);
         PessoaFisicaRequest request = new PessoaFisicaRequest("João da Silva", "12345678900",

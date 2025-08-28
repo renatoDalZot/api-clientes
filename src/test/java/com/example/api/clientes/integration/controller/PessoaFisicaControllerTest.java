@@ -115,4 +115,19 @@ public class PessoaFisicaControllerTest {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnprocessableEntity());
     }
+
+    @Test
+    @SqlGroup({
+            @Sql(scripts = "/sql/inserir_pessoa_fisica.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+            @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    })
+    void deveRetornar422QuandoCpfDuplicado() throws Exception {
+        var request = new PessoaFisicaRequest("João da Silva", "12345678900",
+                LocalDate.of(2000, 1, 1));
+
+        mockMvc.perform(post("/v1/clientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnprocessableEntity());
+    }
 }
