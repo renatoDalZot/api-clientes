@@ -2,6 +2,7 @@ package com.example.api.clientes.application.service;
 
 import com.example.api.clientes.application.dto.PessoaFisicaRequest;
 import com.example.api.clientes.application.dto.PessoaFisicaResponse;
+import com.example.api.clientes.application.exception.BusinessException;
 import com.example.api.clientes.domain.model.PessoaFisica;
 import com.example.api.clientes.domain.repository.PessoaFisicaRepository;
 import jakarta.transaction.Transactional;
@@ -23,6 +24,8 @@ public class PessoaFisicaService {
 
     @Transactional
     public PessoaFisicaResponse cadastrar(PessoaFisicaRequest pessoaFisicaRequest) {
+        checkForDuplicity(pessoaFisicaRequest);
+
         PessoaFisica pessoaFisica = new PessoaFisica(
                 pessoaFisicaRequest.nome(),
                 pessoaFisicaRequest.cpf(),
@@ -51,5 +54,11 @@ public class PessoaFisicaService {
                 pessoa.getRendaMensal(),
                 pessoa.getScore()
         );
+    }
+
+    private void checkForDuplicity(PessoaFisicaRequest pessoaFisicaRequest) {
+        if (pessoaFisicaRepository.findByCpf(pessoaFisicaRequest.cpf()).isPresent()) {
+            throw new BusinessException("Pessoa já cadastrada com esse CPF");
+        }
     }
 }
