@@ -60,7 +60,7 @@ public class PessoaFisicaServiceTest {
     }
 
     @Test
-    void daoDeveCadastrarPessoaFisicaJaCadastrada() {
+    void naoDeveCadastrarPessoaFisicaJaCadastrada() {
         ReflectionTestUtils.setField(pessoaMock, "id", 1L);
         EasyMock.expect(pessoaFisicaRepositoryMock.findByCpf("12345678900")).andReturn(java.util.Optional.of(pessoaMock));
         EasyMock.replay(pessoaFisicaRepositoryMock);
