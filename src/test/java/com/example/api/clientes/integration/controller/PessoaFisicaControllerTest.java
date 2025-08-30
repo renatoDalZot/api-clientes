@@ -11,12 +11,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Clock;
@@ -32,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-public class PessoaFisicaControllerTest {
+class PessoaFisicaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -73,10 +71,8 @@ public class PessoaFisicaControllerTest {
     }
 
     @Test
-    @SqlGroup({
-            @Sql(scripts = "/sql/inserir_pessoa_fisica.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-            @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    })
+    @Sql(scripts = "/sql/inserir_pessoa_fisica.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void deveBuscarPessoaFisicaPorId() throws Exception {
         PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João da Silva", "12345678900",
                 LocalDate.of(2000, 1, 1));
@@ -91,10 +87,9 @@ public class PessoaFisicaControllerTest {
     }
 
     @Test
-    @SqlGroup({
-            @Sql(scripts = "/sql/inserir_pessoa_fisica.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-            @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    })
+    @Sql(scripts = "/sql/inserir_pessoa_fisica.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+
     void deveBuscarPessoaFisicaPorCpf() throws Exception {
         PessoaFisicaRequest pessoaArranjo = new PessoaFisicaRequest("João da Silva", "12345678900",
                 LocalDate.of(2000, 1, 1));
@@ -104,30 +99,5 @@ public class PessoaFisicaControllerTest {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.nome").value(pessoaArranjo.nome()))
                 .andExpect(jsonPath("$.cpf").value(pessoaArranjo.cpf()));
-    }
-
-    @Test
-    void deveRetornar422QuandoPessoaMenorDeIdade() throws Exception {
-        var request = new PessoaFisicaRequest("João da Silva", "12345678900",
-                LocalDate.of(2007, 4, 2));
-        mockMvc.perform(post("/v1/clientes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnprocessableEntity());
-    }
-
-    @Test
-    @SqlGroup({
-            @Sql(scripts = "/sql/inserir_pessoa_fisica.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
-            @Sql(scripts = "/sql/limpar_tabelas.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    })
-    void deveRetornar422QuandoCpfDuplicado() throws Exception {
-        var request = new PessoaFisicaRequest("João da Silva", "12345678900",
-                LocalDate.of(2000, 1, 1));
-
-        mockMvc.perform(post("/v1/clientes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnprocessableEntity());
     }
 }

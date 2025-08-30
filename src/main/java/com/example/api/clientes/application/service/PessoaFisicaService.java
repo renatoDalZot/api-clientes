@@ -24,7 +24,7 @@ public class PessoaFisicaService {
 
     @Transactional
     public PessoaFisicaResponse cadastrar(PessoaFisicaRequest pessoaFisicaRequest) {
-        checkForDuplicity(pessoaFisicaRequest);
+        verificarPessoaJaCadastrada(pessoaFisicaRequest);
 
         PessoaFisica pessoaFisica = new PessoaFisica(
                 pessoaFisicaRequest.nome(),
@@ -56,9 +56,9 @@ public class PessoaFisicaService {
         );
     }
 
-    private void checkForDuplicity(PessoaFisicaRequest pessoaFisicaRequest) {
-        if (pessoaFisicaRepository.findByCpf(pessoaFisicaRequest.cpf()).isPresent()) {
-            throw new BusinessException("Pessoa já cadastrada com esse CPF");
-        }
+    private void verificarPessoaJaCadastrada(PessoaFisicaRequest pessoaFisicaRequest) {
+        pessoaFisicaRepository.findByCpf(pessoaFisicaRequest.cpf()).ifPresent(p -> {
+            throw new BusinessException("Pessoa física já cadastrada. CPF " + pessoaFisicaRequest.cpf());
+        });
     }
 }
