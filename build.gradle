@@ -42,6 +42,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/com.oracle.database.jdbc/ojdbc10
 	implementation("com.oracle.database.jdbc:ojdbc10:19.26.0.0")
 	implementation 'org.springframework.kafka:spring-kafka'
+	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
 tasks.named('test') {
