@@ -24,7 +24,7 @@ public class PessoaFisicaService {
 
     @Transactional
     public PessoaFisicaResponse cadastrar(PessoaFisicaRequest pessoaFisicaRequest) {
-        verificarPessoaJaCadastrada(pessoaFisicaRequest);
+        verificarPessoaJaCadastrada(pessoaFisicaRequest.cpf());
 
         PessoaFisica pessoaFisica = new PessoaFisica(
                 pessoaFisicaRequest.nome(),
@@ -56,9 +56,9 @@ public class PessoaFisicaService {
         );
     }
 
-    private void verificarPessoaJaCadastrada(PessoaFisicaRequest pessoaFisicaRequest) {
-        pessoaFisicaRepository.findByCpf(pessoaFisicaRequest.cpf()).ifPresent(p -> {
-            throw new BusinessException("Pessoa física já cadastrada. CPF " + pessoaFisicaRequest.cpf());
+    private void verificarPessoaJaCadastrada(String cpf) {
+        pessoaFisicaRepository.findByCpf(cpf).ifPresent(p -> {
+            throw new BusinessException("Pessoa física já cadastrada. CPF " + cpf);
         });
     }
 }
