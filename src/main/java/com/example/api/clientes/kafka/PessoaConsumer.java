@@ -26,12 +26,8 @@ public class PessoaConsumer {
         this.pessoaProducer = pessoaProducer;
     }
 
-    @KafkaListener(id = "validated", topics = TOPICO_CRIAR_PESSOA_FISICA, groupId = "pessoa-group" /*errorHandler = "validationErrorHandler",*/
-            /*containerFactory = "kafkaJsonListenerContainerFactory"*/)
+    @KafkaListener(id = "validated", topics = TOPICO_CRIAR_PESSOA_FISICA, groupId = "pessoa-group")
     public void consumirCadastroPessoaFisica(@Valid @Payload PessoaFisicaRequest  mensagem) {
-
-        /*var mensagem = consumerRecord.value();*/
-
         log.info("Mensagem de cadastro de pessoa física recebida: " + mensagem);
         var pessoaSalva = pessoaFisicaService.cadastrar(mensagem);
         log.info("Pessoa física cadastrada com ID: " + pessoaSalva.id());
