@@ -1,11 +1,12 @@
 package com.example.api.clientes.unit.application;
 
-import com.example.api.clientes.application.service.PessoaFisicaService;
 import com.example.api.clientes.application.dto.PessoaFisicaRequest;
 import com.example.api.clientes.application.dto.PessoaFisicaResponse;
+import com.example.api.clientes.application.exception.BusinessException;
+import com.example.api.clientes.application.service.PessoaFisicaService;
 import com.example.api.clientes.domain.model.PessoaFisica;
 import com.example.api.clientes.domain.repository.PessoaFisicaRepository;
-
+import org.assertj.core.api.Assertions;
 import org.easymock.EasyMock;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -56,6 +57,19 @@ public class PessoaFisicaServiceTest {
 
         assertEquals(1L, response.id());
         assertEquals("João da Silva", response.nome());
+    }
+
+    @Test
+    void deveExcepcionarSePessoaFisicaJaCadastrada() {
+        ReflectionTestUtils.setField(pessoaMock, "id", 1L);
+        EasyMock.expect(pessoaFisicaRepositoryMock.findByCpf("12345678900")).andReturn(java.util.Optional.of(pessoaMock));
+        EasyMock.replay(pessoaFisicaRepositoryMock);
+        PessoaFisicaRequest request = new PessoaFisicaRequest("João da Silva", "12345678900",
+                LocalDate.of(2000, 1, 1));
+
+        Assertions.assertThatThrownBy(() -> {
+            service.cadastrar(request);
+        }).isInstanceOf(BusinessException.class).hasMessage("Pessoa física já cadastrada. CPF 12345678900");
     }
 
     @Test
